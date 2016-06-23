@@ -1,0 +1,19 @@
+template <typename T>
+void List<T>::reverse()
+{
+	Node *temp;
+	Node *p = head;
+	tail = head;
+
+	while(p != NULL)
+	{
+		temp = p->next;
+		p->next = p->prev;
+		p->prev = temp;
+		if(p->prev == NULL)
+			head = p;
+		p = p->prev;
+	}
+}
+
+Because the member function reverse must touch every node to switch the next and prev pointers, given n nodes the while loop would run n times therefore it has a time complexity of O(n).

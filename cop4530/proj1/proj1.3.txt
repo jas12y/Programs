@@ -1,0 +1,162 @@
+/*
+Programmers Name: John Stubbs
+      Assignment: #1
+            Date: 1/10/14
+*/
+#include <map>
+#include <string>
+#include <cstdlib>
+#include <fstream>
+#include <iostream>
+//#include <algorithm>
+//#include <cctype>
+//#include <utility>
+//#include <vector>
+
+using namespace std;
+
+void openFile(ifstream &inFile, char* fileName)
+{
+    inFile.open(fileName);
+
+    while(!inFile)
+    {
+        cout << "Error opening file..." << endl;
+        exit(0);
+    }
+}
+int main(int argc, char *argv[]) 
+{
+    ifstream inFile;
+    char* fileName = argv[1];
+    map<char, int> charsMap;
+    map<string, int> wordsMap;
+    map<string, int> numbsMap;
+    multimap<int, char> mmChars;
+    multimap<int, string> mmWords;
+    multimap<int, string> mmNumbs;
+    typedef map<char, int>::iterator cmi;
+    typedef map<string, int>::iterator smi;
+    typedef multimap<int, char>::reverse_iterator cmmi;
+    typedef multimap<int, string>::reverse_iterator smmi;
+    bool newWord = true;
+    string word;
+    char data;
+    int counter;
+    
+    openFile(inFile, fileName);
+    
+    inFile.get(data);
+    
+    while (!inFile.eof())
+    {
+	    ++charsMap[data];
+	    
+	    if((isalpha(data) && isalpha(inFile.peek()) || isdigit(data) && isdigit(inFile.peek()))&& newWord)
+        {
+            word = tolower(data);
+            newWord = false;
+        }
+        else if((isalpha(data) && isalpha(inFile.peek()) || isdigit(data) && isdigit(inFile.peek())) && !newWord)
+        {
+            word += tolower(data);
+        }
+        else if(((tolower(data) == 'a' || tolower(data) == 'i') || isdigit(data)) && newWord)
+        {
+            word = tolower(data);
+            if(isalpha(data))
+                ++wordsMap[word];
+            else
+                ++numbsMap[word];
+        }
+        else if((isalpha(data) || isdigit(data)) && !newWord)
+        {
+            word += tolower(data);
+            if(isalpha(data))
+                ++wordsMap[word];
+            else
+                ++numbsMap[word];
+            newWord = true;
+        }
+	    inFile.get(data);
+    }
+    
+    for (cmi itr = charsMap.begin(); itr != charsMap.end(); ++itr)
+        mmChars.insert(make_pair(itr->second, itr->first));
+    
+    cout << "Total " << mmChars.size() << " different characters, ";
+    
+        if(mmChars.size() < 10)
+            cout << mmChars.size();
+        else
+            cout << 10;
+        cout << " most used characters:\n";
+    
+    counter = 0;
+    
+    for (cmmi itr = mmChars.rbegin(); (itr != mmChars.rend() && counter < 10); ++itr)
+    {
+	    cout << "No. " << counter << ":\t";
+            
+            switch(itr->second)
+            {
+                case '\n':
+                    cout << "\\n";
+                    break;
+                case '\t':
+                    cout << "\\t";
+                    break;
+                case '\0':
+                    cout << "NUL";
+                    break;
+                default:
+                    cout << itr->second;
+                    break;
+            }
+        cout  << "\t\t" << itr->first << "\n";
+        ++counter;
+    }
+    
+    for (smi itr = wordsMap.begin(); itr != wordsMap.end(); ++itr)
+        mmWords.insert(make_pair(itr->second, itr->first));
+    
+    cout << "Total " << mmWords.size() << " different words, ";
+    
+        if(mmWords.size() < 10)
+            cout << mmWords.size();
+        else
+            cout << 10;
+        cout << " most used words:\n";
+    
+    counter = 0;
+    
+    for (smmi itr = mmWords.rbegin(); (itr != mmWords.rend() && counter < 10); ++itr)
+    {
+	    cout << "No. " << counter << ":\t";
+        cout << itr->second << "\t\t" << itr->first << "\n";
+        ++counter;
+    }
+    
+    for (smi itr = numbsMap.begin(); itr != numbsMap.end(); ++itr)
+        mmNumbs.insert(make_pair(itr->second, itr->first));
+    
+    cout << "Total " << mmNumbs.size() << " different numbers, ";
+    
+        if(mmNumbs.size() < 10)
+            cout << mmNumbs.size();
+        else
+            cout << 10;
+        cout << " most used numbers:\n";
+    
+    counter = 0;
+    
+    for (smmi itr = mmNumbs.rbegin(); (itr != mmNumbs.rend() && counter < 10); ++itr)
+    {
+	    cout << "No. " << counter << ":\t";
+        cout << itr->second << "\t\t" << itr->first << "\n";
+        ++counter;
+    }
+    
+    system("PAUSE");
+    return(EXIT_SUCCESS);
+}

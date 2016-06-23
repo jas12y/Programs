@@ -1,0 +1,275 @@
+/*
+Programmers Name: John Stubbs
+      Assignment: #1
+            Date: 1/10/14
+
+
+*/
+#include <list>
+#include <vector>
+#include <cstdlib>
+#include <string>
+#include <fstream>
+#include <iostream>
+
+using namespace std;
+
+const int ELEM_SIZE = 257;
+template<typename T>
+struct elements
+{
+    T value;
+    int key;
+    int count;
+    
+    elements(T data)
+    {
+        value = data;
+        key = data % ELEM_SIZE;
+        count = 1;
+    }
+};
+template<typename T>
+struct wordElem
+{
+    T value;
+    int key;
+    int count;
+    
+    wordElem(T data)
+    {
+        value = data;
+        key = data[0] % ELEM_SIZE;
+        count = 1;
+    }
+};
+struct myElem
+{
+    bool operator() (list<elements<char>*> y, list<elements<char>*> z)
+    {
+        if((isalpha(y.front()->value) && isalpha(z.front()->value)) && (y.front()->count == z.front()->count))
+            return (y.front()->value < z.front()->value);
+        else if((isalpha(y.front()->value) && !isalpha(z.front()->value)) && (y.front()->count == z.front()->count))
+            return (y.front()->value < z.front()->value);
+        else if((!isalpha(y.front()->value) && isalpha(z.front()->value)) && (y.front()->count == z.front()->count))
+            return (y.front()->value < z.front()->value);
+        else
+            return (z.front()->count < y.front()->count);
+    }
+} myChars;
+void openFile(ifstream &inFile, char* fileName)
+{
+    // Open the input file
+    inFile.open(fileName);
+
+    // Test for errors
+    while(!inFile)
+    {
+        // Error message
+        cout << "Error opening file..." << endl;
+        exit(0);
+    }
+}
+int main(int argc, char *argv[])
+{
+    char* fileName;
+    char data;
+    int key;
+    int temp = 0;
+    int numChar = 0, numWords = 0, numNumbs = 0;
+    bool newWord = true;
+    string word;
+    ifstream inFile;
+    elements<char>* elemPtr;
+    wordElem<string>* wordPtr;
+    vector< list< elements<char>* > > chars(ELEM_SIZE);
+    vector< list< wordElem<string>* > > words(ELEM_SIZE);
+    vector< list< wordElem<string>* > > numbs(ELEM_SIZE);
+    
+    fileName = argv[1];
+    
+    openFile(inFile, fileName);
+    
+    inFile.get(data);
+    
+    while(!inFile.eof())
+    {
+        key = data % ELEM_SIZE;
+        if(chars[key].empty())
+        {
+            elemPtr = new elements<char>(data);
+            chars[key].push_back(elemPtr);
+            ++numChar;
+            //cout << "new " << data << endl;
+        }
+        else
+        {
+            for(list<elements<char>*>::iterator li = chars[key].begin(); li != chars[key].end(); ++li)
+            {
+                if(chars[key].front()->value == data)
+                {
+                    ++(chars[key].front()->count);
+                    //cout << "increase " << data << endl;
+                    break;
+                }
+            }
+        }
+        /*if(isalpha(data) && isalpha(inFile.peek()) || isdigit(data) && isdigit(inFile.peek()) && newWord)
+        {
+            word = tolower(data);
+            newWord = false;
+        }
+        else if((isalpha(data) && isalpha(inFile.peek()) || isdigit(data) && isdigit(inFile.peek())) && !newWord)
+        {
+            word += tolower(data);
+        }
+        else if((isdigit(data) || (tolower(data) == 'a' || tolower(data) == 'i')) && newWord)
+        {
+            word = tolower(data);
+            key = word[0] % ELEM_SIZE;
+            
+            if(isalpha(data))
+            {
+                if(words[key].empty())
+                {
+                    wordPtr = new wordElem<string>(word);
+                    words[key].push_back(wordPtr);
+                    ++numWords;
+                }
+                else
+                {
+                    for(list<wordElem<string>*>::iterator li = words[key].begin(); li != words[key].end(); ++li)
+                    {
+                        if(words[key].front()->value == word)
+                        {
+                            ++(words[key].front()->count);
+                            break;
+                        }
+                    }
+                }
+            }
+            else if(isdigit(data))
+            {
+                if(numbs[key].empty())
+                {
+                    wordPtr = new wordElem<string>(word);
+                    numbs[key].push_back(wordPtr);
+                    ++numNumbs;
+                }
+                else
+                {
+                    for(list<wordElem<string>*>::iterator li = numbs[key].begin(); li != numbs[key].end(); ++li)
+                    {
+                        if(numbs[key].front()->value == word)
+                        {
+                            ++(numbs[key].front()->count);
+                            break;
+                        }
+                    }
+                }
+            }
+        }
+        else if((isalpha(data) || isdigit(data)) && !newWord)
+        {
+            word += tolower(data);
+            key = word[0] % ELEM_SIZE;
+            newWord = true;
+            
+            if(isalpha(data))
+            {
+                if(words[key].empty())
+                {
+                    wordPtr = new wordElem<string>(word);
+                    words[key].push_back(wordPtr);
+                    ++numWords;
+                }
+                else
+                {
+                    for(list<wordElem<string>*>::iterator li = words[key].begin(); li != words[key].end(); ++li)
+                    {
+                        if(words[key].front()->value == word)
+                        {
+                            ++(words[key].front()->count);
+                            break;
+                        }
+                    }
+                }
+            }
+            else if(isdigit(data))
+            {
+                if(numbs[key].empty())
+                {
+                    wordPtr = new wordElem<string>(word);
+                    numbs[key].push_back(wordPtr);
+                    ++numNumbs;
+                }
+                else
+                {
+                    for(list<wordElem<string>*>::iterator li = numbs[key].begin(); li != numbs[key].end(); ++li)
+                    {
+                        if(numbs[key].front()->value == word)
+                        {
+                            ++(numbs[key].front()->count);
+                            break;
+                        }
+                    }
+                }
+            }
+        }*/
+        cout << data << endl;
+        inFile.get(data);
+    }
+    if(!chars.empty())
+    {
+        sort (chars.begin(), chars.end(), myChars);
+        
+        cout << "Total " << numChar << " different characters, ";
+    
+        if(numChar < 10)
+            cout << numChar;
+        else
+            cout << 10;
+        cout << " most used characters:\n";
+        
+        for(vector<list<elements<char>*> >::iterator vi = chars.begin(); vi != chars.end(); ++vi)
+        {
+            if(temp < numChar && temp < 10)
+            {
+                if(vi->empty())
+                    continue;
+                for(list<elements<char>*>::iterator li = vi->begin(); li != vi->end(); ++li)
+                {
+                    cout << "No. " << temp << ":\t";
+                    
+                    ++temp;                                       
+                    
+                    switch((vi->front())->value)
+                    {
+                        case '\n':
+                            cout << "\\n";
+                            break;
+                        case '\t':
+                            cout << "\\t";
+                            break;
+                        case '\0':
+                            cout << "NUL";
+                        default:
+                            cout << (vi->front())->value;
+                            break;
+                    }
+                    cout << "\t\t" << (vi->front())->count << endl;
+                }
+            }
+            else
+                break;
+        }
+    }
+    
+    inFile.close(); 
+    delete elemPtr;
+    //delete wordPtr;
+    cout << "\n\n";
+
+    system("PAUSE");
+    return EXIT_SUCCESS;
+}

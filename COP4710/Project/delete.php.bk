@@ -1,0 +1,98 @@
+<?php
+session_start();
+	if(!isset($_SESSION['username']))
+	{
+		session_destroy();
+		header("location:project.php");
+	}
+	if(isset($_POST['menu']))
+		header("location:menu.php");
+
+include 'database_connector.php';
+
+if(isset($_POST['play']))
+{
+	$pfile = $_POST['play'];
+
+?>
+	<center>
+	<audio controls autoplay>
+	<source src="<?php echo '/test/'.$pfile;?>" type="audio/mpeg">
+	<embed height="10" width="20" src="<?php echo '/test/'.$pfile;?>">
+	</audio>
+	</form>
+	<?php echo $pfile;?>
+	</center>
+
+<?php
+}
+$DirectoryToScan = 'S:/test';
+$dir = opendir($DirectoryToScan);
+$hf = 'S:/test/';
+require_once('../testread3/getID3-1.9.7/getid3/getid3.php');
+$getID3 = new getID3;
+?>
+<html>
+<body bgcolor="#808080">
+<center>
+<form action="delete.php" method="post">
+    <table cellpadding="3">
+<tr>
+		<td>&nbsp;</td>
+		<td align="center">Title</td>
+		<td align="center">Artist</td>
+		<td align="center">Album</td>
+		<td align="center">Genre</td>
+		<td align="center">Playtime</td>
+	</tr>
+<!--		<?php
+        $result=mysqli_query($con,"select *from song");
+        $color=0;
+        $i=0;
+//        while($row=mysqli_fetch_array($result))
+//        {       
+        ?>-->
+<?php
+while ($file = readdir($dir))
+{
+
+$FullFileName = realpath($DirectoryToScan.'/'.$file);
+if ((substr($FullFileName, 0, 1) != '.') && is_file($FullFileName))
+{
+
+$ThisFileInfo = $getID3->analyze($FullFileName);
+getid3_lib::CopyTagsToComments($ThisFileInfo);
+
+$row1 = htmlentities(!empty($ThisFileInfo['comments_html']['title'])  ? implode(' ', $ThisFileInfo['comments_html']['title']): chr(160));
+$row2 = htmlentities(!empty($ThisFileInfo['comments_html']['artist'])  ? implode(' ', $ThisFileInfo['comments_html']['artist']): chr(160));
+$row3 = htmlentities(!empty($ThisFileInfo['comments_html']['album'])  ? implode(' ', $ThisFileInfo['comments_html']['album']): chr(160));
+$row4 = htmlentities(!empty($ThisFileInfo['comments_html']['genre'])  ? implode(' ', $ThisFileInfo['comments_html']['genre']): chr(160));
+$row5 = htmlentities(!empty($ThisFileInfo['playtime_string']) ? $ThisFileInfo['playtime_string'] : chr(160))
+?>
+
+              <tr bgcolor='<?php if(($color%2)==0) echo "#688e23"; else echo "#d3d3d3"; ?>'>
+
+              <td><input type="image" src="button_play_green.png" name="play" alt="Play" value="<?php echo $file;?>"></td>
+                <td><?php echo $row1; ?></td>
+                <td><?php echo $row2; ?></td>
+		<td><?php echo $row3; ?></td>
+		<td><?php echo $row4; ?></td>
+                <td><?php echo $row5; ?></td>
+              </tr>
+		<?php 
+				$color=$color+1;
+				$i++;
+        }
+}
+        ?>
+    </table>
+</form>
+	
+</center>
+
+
+<form method="post" action="menu.php"><input type="submit" name="menu" value="Main Menu"></form>
+</body>
+</html>
+</body>
+</html>

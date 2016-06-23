@@ -1,0 +1,73 @@
+<?php
+	session_start();
+	if(!isset($_SESSION['username']))
+	{
+		session_destroy();
+		header("location:project.php");
+	}
+	if(isset($_POST['menu']))
+		header("location:menu.php");
+	include 'database_connector.php';
+	
+	if(isset($_POST['title']))
+	{
+		$title=$_POST['title'];
+		$artist=$_POST['artist'];
+		$descript=$_POST['descript'];
+		
+		$result=mysqli_query($con,"insert into song values('$title','$artist','$descript')");
+		if($result)
+		{
+		echo '<center>'.'Values updated successfully'.'</center>';
+		}
+
+	}
+	/*else
+	{
+		$username=$_SESSION['username'];
+		$result=mysqli_query($con,"select *from stu_info where userid='$username'");
+		$row=mysqli_fetch_array($result);
+		
+	}*/
+          
+        
+			
+?>
+
+<html>
+<body bgcolor="#808080">
+<form action="insert.php" method="post">
+  <div align="center">
+  <table width="200" border="0">
+    <tr>
+      <td>Title</td>
+      <td>&nbsp;</td>
+      <td><div align="center">
+        <textarea maxlength="64" cols="32" rows="2" name="title" required></textarea>
+        </div></td>
+      </tr>
+    <tr>
+      <td>Artist</td>
+      <td>&nbsp;</td>
+      <td><div align="center">
+        <textarea maxlength="64" cols="32" rows="2" name="artist" ></textarea>
+        </div></td>
+      </tr>
+    <tr>
+      <td>Description</td>
+      <td>&nbsp;</td>
+      <td><div align="center">
+        <textarea maxlength="64" cols="32" rows="2" name="descript" ></textarea>
+        </div></td>
+      </tr>
+  </table>
+    
+  <input type="submit" name="submit" value="Update">
+    
+  </div>
+</form>
+
+
+<form method="post" action="menu.php"><input type="submit" name="menu" value="Main Menu"></form>
+</body>
+</html>

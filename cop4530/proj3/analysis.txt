@@ -1,0 +1,1 @@
+Because I used a list in my implementaion of stack and the list clear function is linear, therefore the stack clear function has O(n).

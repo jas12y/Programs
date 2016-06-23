@@ -1,0 +1,25 @@
+create database hw3;
+use hw3;
+
+
+create table beers(
+id int not null auto_increment,
+name varchar(100),
+manufacturer varchar(100),
+primary key(id) 
+);
+
+create table bars(
+id int not null auto_increment,
+name varchar(100),
+address varchar(100),
+primary key(id)
+);
+
+create table sells(
+beer int,
+bar int,
+price real,
+FOREIGN KEY (beer) REFERENCES beers(id) on delete cascade,
+FOREIGN KEY (bar) REFERENCES bars(id)
+);

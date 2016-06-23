@@ -1,0 +1,294 @@
+/*
+Programmers Name: John Stubbs
+      Assignment: #1
+            Date: 1/10/14
+
+
+*/
+#include <vector>
+#include <cstdlib>
+#include <string>
+#include <fstream>
+#include <iostream>
+#include <algorithm>
+
+using namespace std;
+struct elements
+{
+    int count;
+    char value;
+    
+    elements(char data)
+    {
+        value = data;
+        count = 1;
+    }
+};
+struct words
+{
+    int count;
+    string value;
+    
+    words(string data)
+    {
+        value = data;
+        count = 1;
+    }
+};
+struct myElem
+{
+    bool operator() (elements* y, elements* z)
+    {
+        if((isalpha(y->value) && isalpha(z->value)) && (y->count == z->count))
+            return (y->value < z->value);
+        else if((isalpha(y->value) && !isalpha(z->value)) && (y->count == z->count))
+            return (y->value < z->value);
+        else if((!isalpha(y->value) && isalpha(z->value)) && (y->count == z->count))
+            return (y->value < z->value);
+        else
+            return (z->count < y->count);
+    }
+} myChars;
+struct myWord
+{
+    bool operator() (words* y, words* z)
+    {
+        if(y->count == z->count)
+            return (y < z);
+        return (z->count < y->count);
+    }
+} myWords;
+
+// Function Prototypes
+void openFile(ifstream &, char*);
+
+int main(int argc, char *argv[])
+{
+    char* fileName;
+    char data;
+    string word;
+    bool newWord = true;
+    ifstream inFile;
+    elements* elemPtr;
+    words* alphaPtr;
+    words* numPtr;
+    vector<elements*> chars;
+    vector<words*> alphaWords;
+    vector<words*> numWords;
+    fileName = argv[1];
+    
+    openFile(inFile, fileName);
+    
+    inFile.get(data);
+    
+    while(!inFile.eof())
+    {
+        for(int i = 0; i < chars.size(); ++i)
+        {
+            if(data == chars[i]->value)
+            {
+                ++chars[i]->count;
+                goto skip1;
+            }
+        }
+        
+        elemPtr = new elements(data);
+        chars.push_back(elemPtr);
+    skip1:
+        if(!isalpha(data) && !isdigit(data))
+            goto skip2;
+        else if((isalpha(data) && isalpha(inFile.peek()) || isdigit(data) && isdigit(inFile.peek()))&& newWord)
+        {
+            if(isalpha(data))
+            {
+                word = tolower(data);
+                newWord = false;
+            }
+            else
+            {
+                word = data;
+                newWord = false;
+            }
+        }
+        else if((isalpha(data) && isalpha(inFile.peek()) || isdigit(data) && isdigit(inFile.peek())) && !newWord)
+        {
+            if(isalpha(data))
+                word += tolower(data);
+            else
+                word += data;
+        }
+        else if(isdigit(data) && newWord)
+        {
+            word = data;
+            
+            for(int i = 0; i < numWords.size(); ++i)
+            {
+                if(word == numWords[i]->value)
+                {
+                    ++numWords[i]->count;
+                    goto skip2;
+                }
+            }
+            
+            numPtr = new words(word);
+            numWords.push_back(numPtr);
+        }
+        else if((tolower(data) == 'a' || tolower(data) == 'i') && newWord)
+        {
+            word = tolower(data);
+            
+            for(int i = 0; i < alphaWords.size(); ++i)
+            {
+                if(word == alphaWords[i]->value)
+                {
+                    ++alphaWords[i]->count;
+                    goto skip2;
+                }
+            }
+            
+            alphaPtr = new words(word);
+            alphaWords.push_back(alphaPtr);
+        }
+        else if(isalpha(data) && !newWord)
+        {
+            word += tolower(data);
+            
+            for(int i = 0; i < alphaWords.size(); ++i)
+            {
+                if(word == alphaWords[i]->value)
+                {
+                    ++alphaWords[i]->count;
+                    newWord = true;
+                    goto skip2;
+                }
+            }
+            
+            alphaPtr = new words(word);
+            alphaWords.push_back(alphaPtr);
+            newWord = true;
+        }
+        else if(isdigit(data) && !newWord)
+        {
+            word += data;
+            
+            for(int i = 0; i < numWords.size(); ++i)
+            {
+                if(word == numWords[i]->value)
+                {
+                    ++numWords[i]->count;
+                    newWord = true;
+                    goto skip2;
+                }
+            }
+            
+            numPtr = new words(word);
+            numWords.push_back(numPtr);
+            newWord = true;
+        }
+    skip2:
+        inFile.get(data);
+    }
+    if(!chars.empty())
+    {
+        sort (chars.begin(), chars.end(), myChars);
+        
+        cout << "Total " << chars.size() << " different characters, ";
+    
+        if(chars.size() < 10)
+            cout << chars.size();
+        else
+            cout << 10;
+        cout << " most used characters:\n";
+        
+        for (int i = 0; (i < chars.size() && i < 10); ++i)
+        {
+            cout << "No. " << i << ":\t";
+            
+            switch(chars[i]->value)
+            {
+                case '\n':
+                    cout << "\\n";
+                    break;
+                case '\t':
+                    cout << "\\t";
+                    break;
+                case '\0':
+                    cout << "NUL";
+                default:
+                    cout << chars[i]->value;
+                    break;
+            }
+                    
+            cout  << "\t\t" << chars[i]->count << "\n";
+        }
+        
+        delete elemPtr;
+    }
+    if(!alphaWords.empty())
+    {
+        sort (alphaWords.begin(), alphaWords.end(), myWords);
+        
+        cout << "Total " << alphaWords.size() << " different words, ";
+    
+        if(alphaWords.size() < 10)
+            cout << alphaWords.size();
+        else
+            cout << 10;
+        cout << " most used words:\n";
+        
+        for (int i = 0; (i < alphaWords.size() && i < 10); ++i)
+        {
+            cout << "No. " << i << ":\t";
+            
+            cout << alphaWords[i]->value;
+            
+            cout  << "\t\t" << alphaWords[i]->count << "\n";
+        }
+        
+        delete alphaPtr;
+    }
+    if(!numWords.empty())
+    {
+        sort (numWords.begin(), numWords.end(), myWords);
+        
+        cout << "Total " << numWords.size() << " different numbers, ";
+    
+        if(numWords.size() < 10)
+            cout << numWords.size();
+        else
+            cout << 10;
+        cout << " most used numbers:\n";
+        
+        for (int i = 0; (i < numWords.size() && i < 10); ++i)
+        {
+            cout << "No. " << i << ":\t";
+            
+            cout << numWords[i]->value;
+            
+            cout  << "\t\t" << numWords[i]->count << "\n";
+        }
+        
+        delete numPtr;
+    }
+    
+    inFile.close(); 
+    
+    cout << "\n\n";
+
+    system("PAUSE");
+    return EXIT_SUCCESS;
+}
+// Gets input file name and opens file
+void openFile(ifstream &inFile, char* fileName)
+{
+    // Open the input file
+    inFile.open(fileName);
+
+    // Test for errors
+    while(!inFile)
+    {
+        // Error message
+        cout << "Error opening file..." << endl;
+        exit(0);
+    }
+}

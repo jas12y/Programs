@@ -1,0 +1,53 @@
+Student Grade Summary
+---------------------
+
+ENGLISH CLASS
+
+Name				Final Exam		Final Avg	Grade
+-----------------------------------------------------------------------------
+Marvin Dipwart                        88		  80.30		  B
+
+Chuck Duck                            90		  85.50		  B
+
+Donald Duck                           65		  72.40		  C
+
+James T. Kirk                         88		  80.80		  B
+
+Richard Nixon                         70		  75.20		  C
+
+Ned Zelly                             90		  90.00		  A
+
+
+
+HISTORY CLASS
+
+Name				Final Exam		Final Avg	Grade
+-----------------------------------------------------------------------------
+Alex Duck                             80		  74.70		  C
+
+Daffy Duck                            70		  66.25		  D
+
+Monica Lewinsky                       78		  71.40		  C
+
+Abraham Lincoln                       75		  69.60		  D
+
+Joe Schmuckatelli                     90		  84.25		  B
+
+
+
+MATH CLASS
+
+Name				Final Exam		Final Avg	Grade
+-----------------------------------------------------------------------------
+Bugs Bunny                            93		  94.83		  A
+
+Zed Bunny                             92		  90.32		  A
+
+George Bush                           75		  62.56		  D
+
+William Clinton                      100		  73.22		  C
+
+Jamie Crack Corn                      88		  88.00		  B
+
+Jimmy Crack Corn                      68		  65.33		  D
+

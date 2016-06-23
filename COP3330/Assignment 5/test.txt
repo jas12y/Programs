@@ -1,0 +1,35 @@
+17
+Crack Corn, Jamie
+Math 88 88 88 88 88 88 88 88
+Zelly, Ned
+English 90 90 90 90
+Bunny, Bugs
+Math 90 86 80 95 100 99 96 93
+Bunny, Zed
+Math 92 88 78 98 98 88 90 92
+Schmuckatelli, Joe
+History 88 75 90
+Dipwart, Marvin
+English 95 76 72 88
+Crack Corn, Jimmy
+Math 44 58 23 76 50 59 77 68
+Kirk, James T.
+English 40 100 68 88
+Lewinsky, Monica
+History 60 72 78
+Nixon, Richard
+English 35 99 70 70
+Lincoln, Abraham
+History 59 71 75
+Clinton, William
+Math 43 55 25 76 50 58 65 100
+Duck, Donald
+English 34 100 65 65
+Duck, Chuck
+English 45 88 92 90
+Duck, Daffy
+History 55 70 70
+Duck, Alex
+History 70 72 80
+Bush, George
+Math 44 54 29 75 50 55 60 75

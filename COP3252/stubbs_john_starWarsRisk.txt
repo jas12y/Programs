@@ -1,0 +1,68 @@
+John Stubbs -- Star Wars Risk
+
+
+Interface:
+- runs from jar file
+- splash screen, and game board consisting of planets and connecting routes
+
+Interface Suggestions/Issues:
+1) The main general issue I have with interface is that it doesn't really support speedy gameplay. While the board looks good, gameplay moves somewhat slowly. Since this game is already often a "long" game (strategy, lots of moves, etc), anything to speed up the gameplay of individual turns is helpful.  Some of the details below will be suggestions in that regard.
+
+2) Too much reliance on JOptionPane pop-ups. When there are lots of pop-ups in a program, this starts feeling tedious to the user.  There are other ways you can get the "how many armies" info besides pop-ups.  The pop-ups are a major factor in the slower interface.  And since they have no parent component, they always pop-up in the default "middle" of the screen.  This is even if I move the game board to another portion of the monitor (or to another attached monitor on the side).
+
+3) This is how I'm having to test, because your game board is a little too tall for my laptop max screen size (1366 x 768), so I had to attach another monitor.  But the pop-ups are now showing on my laptop screen, even though the game board is moved to the other monitor.
+
+4) The small bars next to the planets to show general troop strength is a nice little touch, but having to wait for the tool tip to pop up (slight delay) when mousing over a planet -- that's part of the slowdown. It would help more here to just put a number next to the bar graphic, that updates when the army numbers update -- would be faster (and easier to see at a glance) than waiting on tool tips for each planet.
+
+5) My suggestions for speeding up the army placement -- initial choosing of planets is fine, players have to go back and forth anyways.  Placement of remaining troops is tedious due to pop-ups every time. Instead of making it "click to select planet, then pop-up to select number of armies", you could instead rotate between players with something like "Republic, place next 5 troops" (then Separatist, place 5, the Republic place 4, etc).  Take turns placing several at a time, so they are still generally taking turns (i.e. not one player having to place ALL remaining at once). Then make it one click on a planet places one army during this stage.  This would eliminate the pop-ups altogether, but still allow them to take turns placing remaining troops.
+
+6) "Next" button at top left during a turn is confusing. It's not immediately clear that this really means "end attacks, move to fortification stage".  So a player might click it thinking they are supposed to do so in order to choose another attack.  Oops...  clicking it means attacks are over.  Make this more clear.  (On the same note, the "choose planet to attack" label at the top is really small, so when looking over the board, it's easy to miss these instructions.
+
+7) "Choose planet to get troops" is what your label says during fortification stage.  This isn't clear if you mean "what planet will receive troops" or "what planet are you getting troops FROM to move" -- make sure in-game instructions are clear.  While this one is actually asking for the "from" planet, it's easy to guess wrong, since attack order is asking for "To" planet first, not "from" planet.
+
+8) Attacks move kind of slow also, mostly due to the pop-ups. Here's a suggestion for an alternate approach.  I would organize an attack by having the player click on the "Attack FROM" planet first to select it, then simply click the planet being attacked. (This is just reverse from your order).  This is where your pop-ups kick in, to ask how many troops.  From my understanding of the rules (and your trimmed down version), attacks work like regular Risk.  This means that you are really attacking with up to 3 dice (and defender is battling with up to 2).  So the only real decision here is whether to attack with LESS than the full 3 if the planet has more than 3.  We don't really need a pop-up asking for a full army amount (like attack with 10).  So...
+
+I would make the DEFAULT assumption be to attack with the largest amount of attack dice available on the "FROM" planet.  If the user wants to CHANGE this, give them a control to switch to fewer -- maybe a right-click to bring up a dialog to change attack dice amount.  Otherwise, let the click on the FROM planet set the attacking planet, then each successive click on the "TO" planet can be a full attack roll, with either the defaul max dice, or the user's selection.  You could even have an attack option that allows one click on the "TO" planet to mean "keep attacking until fewer than ____ armies on the FROM planet".  Either way, one click on the FROM planet selects the attacker, then each click on the adjoining planet is an attack.  Then, if the attacker wins, NOW ask how many troops to move for the victory lap (or have some preset options that the user can change, like max troops available, only attacking troops, etc).  Minimal pop-ups needed overall.
+
+(There are other ways you could speed up attacks -- this is just one set of ideas.  The goal is to avoid the overabundance of pop-ups or controls that slow things down)
+
+
+9) Similarly, to avoid pop-ups in the "fortify" stage, I would just have the user click on a "FROM" planet first, and each click selects one army (so for example, just click 3 times to select 3 armies), or maybe right-click to select "all" armies, then click on the adjoining planet to place them.  No pop-ups needed.
+
+10) I assume that the regions are worth extra armies at the start of a turn (just like holding a whole continent in regular Risk) -- however I don't see info as to what each region is worth in the rules.  Would help to have this info on the actual game board (like in Risk).  Players plan strategies based on region values.
+
+11) TA comment from Martin: The message dialogs should say which player the planet belongs to when he's giving the message “PlanetX attacked PlanetY ...”, and maybe highlight the planets so that the user can know where the action is taking place
+
+
+--------------------
+
+Gameplay:
+- Gameplay (troop placement, attacking, fortifying) seems to work as expected, like in normal Risk.  Obviously this is without the game cards, and trimmed down from extra rules (like 8 sided dice and ships) listed in the official Star Wars rules version you linked.
+
+- Order 66 is an interesting twist, but it really seems to give a major advantage to Separatist side.  If they are already leading, then it's a death blow to the Republic, basically.  I know this is in the official rules -- but I'm curious as to whether this heavy advantage is intended, or if the full rules have something that keeps it more balanced.  (Obviously the "get the emperor to win" creates some balance, but only if the Republic is pretty strong before Order 66).
+
+
+1) Fortification seems to be allowed along any adjoining paths -- for instance, I can move 5 armies from Tatooine to Durn, then I can move those same 5 armies from Durn to Corellia. Then I can move those same 5 armies from Corellia to Ansion.  Etc.
+
+IF this was intended, then you should simplify the process and allow the "TO" planet selection to be any planet along the adjoining owned paths.  If this was NOT intended (i.e. only move armies from any planet to one planet over), then this is not being controlled.
+
+2) (TA Comment from Martin):  In 1-player mode, it doesn't seem like the game ever ends. I try to lose all of my planets, and I am able to get it down to 1-3 planets. But I can never seem to lose the game after that. It seems like I have to get lucky, the game doesn't seem to be able to know how to place their troops at nearby planets in order to attack my 1-3 remaining planets. Their reinforcements are getting placed to planets far away. I tried for a long time and I tried several times, but I wasn't able to lose the game in 1-player mode.
+
+-------------------
+
+Design:
+- Good object-oriented breakdown, epsecially having separate classes for planets and players.
+- Lots of code in Board.java -- would be easier to manage if some of the public classes in there were split into their own files.
+- Be careful with too many indent levels -- at one point your code is indented farther than 80 characters on a line!  Had to really widen the window to see the code.  Makes for harder readability.
+- I liked that you loaded your planets and paths from files, rather than brute-forced it in the code.  This was efficient -- good technique.
+
+
+Extras
+- single player mode, against computer player (although computer player not always smart).
+
+
+Overall:
+- nice job, standard risk rules seem to work well. Primary thing that's needed is a smoother interface that speeds up gameplay and relies less on pop-ups.  For "Version 2", you might think about making the planet graphics a little larger, to increase the visual appeal, and give room for things like the troop numbers (in plain view, not in tooltips).
+
+
+Grade:			88 / 100

@@ -1,0 +1,108 @@
+read is declared in user.h: int read(int, void*, int);
+read is defined in usys.S: SYSCALL(read)
+#define SYS_read    5 //in syscall.h
+#define T_SYSCALL       64      // system call in traps.h
+************************************************************************************
+#define SYSCALL(read) \
+  .globl read; \  declares read as global symbol
+  read: \
+    movl $SYS_read, %eax; \   puts system call number in %eax
+    int $T_SYSCALL; \   trigger a software intereupt, enter kernel
+************************************************************************************
+$T_SYSCALL is vector64 in vectors.S
+
+.globl vector64
+vector64:
+  pushl $0
+  pushl $64
+  jmp alltraps //jumps to alltraps
+************************************************************************************
+  # vectors.S sends all traps here in trapasm.S
+.globl alltraps
+alltraps:
+  # Build trap frame.
+	.
+	.  // pushes registers onto stack
+	.
+  
+  # Set up data and per-cpu segments.
+	.
+	.
+	.
+
+  # Call trap(tf), where tf=%esp
+  pushl %esp
+  call trap
+************************************************************************************
+trap(struct trapframe *tf) // in trap.c
+{
+  if(tf->trapno == T_SYSCALL){
+    if(proc->killed)  // check to see if process is still running
+      exit();
+    proc->tf = tf;
+    syscall();  // call to syscall()
+    if(proc->killed)  // check process again
+      exit();
+    return;
+  }
+************************************************************************************
+void
+syscall(void) // in syscall.c
+{
+  int num;
+
+  num = proc->tf->eax; // number for SYS_read (5)
+  if(num > 0 && num < NELEM(syscalls) && syscalls[num]) {
+    proc->tf->eax = syscalls[num](); // syscalls[SYS_read]
+  } else {
+    cprintf("%d %s: unknown sys call %d\n",
+            proc->pid, proc->name, num);
+    proc->tf->eax = -1;
+  }
+}
+************************************************************************************
+int
+sys_read(void) // in sysfile.c
+{
+  struct file *f;
+  int n;
+  char *p;
+
+  if(argfd(0, 0, &f) < 0 || argint(2, &n) < 0 || argptr(1, &p, n) < 0)
+    return -1;
+  return fileread(f, p, n);
+}
+************************************************************************************
+static int
+argfd(int n, int *pfd, struct file **pf)
+{
+  int fd;
+  struct file *f;
+
+  if(argint(n, &fd) < 0)
+    return -1;
+  if(fd < 0 || fd >= NOFILE || (f=proc->ofile[fd]) == 0)
+    return -1; // returns -1 because no file has been opened
+  if(pfd)
+    *pfd = fd;
+  if(pf)
+    *pf = f;
+  return 0;
+}
+************************************************************************************
+argfd returns -1 to sys_read which returns -1 to syscall
+syscall puts -1 in $eax and returns to trap
+trap checks to see if the process is still running and returns to alltraps
+
+  addl $4, %esp
+
+  # Return falls through to trapret...
+.globl trapret
+trapret:
+  popal
+  popl %gs
+  popl %fs
+  popl %es  // popping registers back off the stack
+  popl %ds
+  addl $0x8, %esp  # trapno and errcode
+  iret  // return from trap

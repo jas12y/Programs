@@ -1,0 +1,23 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+
+    <string name="app_name">COP4656-Assignment 3</string>
+    <string name="action_settings">Settings</string>
+    <string name="rps">Rock Paper Spear</string>
+    <string name="p1">Player\'s Wins</string>
+    <string name="p2">Computer\'s Wins</string>
+    <string name="zero">0</string>
+    <string name="rock">Rock</string>
+    <string name="paper">Paper</string>
+    <string name="spear">Spear</string>
+    <string name="crock">Computer chose Rock</string>
+    <string name="cpaper">Computer chose Paper</string>
+    <string name="cspear">Computer chose Spear</string>
+    <string name="submit">Submit</string>
+    <string name="again">Play Again</string>
+    <string name="win">YOU WIN</string>
+    <string name="lose">YOU LOSE</string>
+    <string name="draw">DRAW</string>
+	<color name="gold">#CDC092</color>
+	<color name="garnet">#540115</color>
+</resources>

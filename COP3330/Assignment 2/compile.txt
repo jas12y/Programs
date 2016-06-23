@@ -1,0 +1,9 @@
+in the correct directory:
+
+g++ -c date.h date.cpp driver.cpp
+
+hit enter then type
+
+g++ -o mainapp date.o driver.o
+
+now type mainapp and it should run it
